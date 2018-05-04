@@ -24,7 +24,6 @@ from keras import optimizers
 from sklearn.metrics import f1_score
 
 
-
 def load_data(file='xab.csv'):
     """ Data is supposed to be preprocessed
     and space separated """
@@ -42,7 +41,7 @@ def get_xy(data):
     return x, y
 
 
-def scale_data(xtrain, xtest, scaler_mode):
+def scale_data(xtrain, xtest, scaler_mode=None):
     """ Args
     ----
     xtrain: training dataframe with features
@@ -73,6 +72,27 @@ def binarize_y(y, arg_list=[12, 13, 17, 20]):
 
 if __name__ == '__main__':
     print('Loading data...')
-    data = load_data()
+    train = load_data()
+    test = load_data(file='xab_test_400.csv')
     print('Done with loading data.')
+
+    xtrain, ytrain = get_xy(train)
+    xtest, ytest = get_xy(test)
+
+    ytrain_bin = binarize_y(ytrain)
+    ytest_bin = binarize_y(ytest)
+    print('info xtrain:')
+    print('xtrain.shape:', xtrain.shape, 'ytrain.shape:', ytrain_bin.shape)
+    print('xtest.shape:', xtest.shape, 'ytest.shape:', ytest_bin.shape)
+
+    print('unique ytrain values:', ytrain.unique())
+    print('unique ytest values:', ytest.unique())
+
+    print('unique ytrain values:', ytrain_bin.unique())
+    print('unique ytest values:', ytest_bin.unique())
+
+    print('')
+    print('Look at both training and test sets.')
+    print(xtrain.head())
+    print(xtest.head())
 
