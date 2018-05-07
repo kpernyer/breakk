@@ -70,8 +70,8 @@ def binarize_y(y, arg_list=[12, 13, 17, 20]):
     return y.map(lambda x: 1 if x in arg_list else 0)
 
 
-train = load_data()
-test = load_data(file='xab_test_400.csv')
+train = load_data(file='all_training_400_minisensor_1.csv')
+test = load_data(file='all_test_400_minisensor.csv')
 
 
 if __name__ == '__main__':

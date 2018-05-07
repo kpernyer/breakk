@@ -50,7 +50,7 @@ def model(units=[1200, 500, 75],
     model.add(Dense(units=1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy',
-                  opimizer=optim,
+                  optimizer=optim,
                   metrics=['accuracy'])
     return model
 
