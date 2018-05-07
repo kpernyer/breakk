@@ -10,19 +10,24 @@ from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout, BatchNormalization
 from keras import optimizers
 from sklearn.metrics import f1_score
-import
+import matplotlib.pyplot as plt
+from load_preprocess import (load_data,
+                             get_xy,
+                             scale_data,
+                             binarize_y)
+
 
 """Deep learning model"""
 
 
 def plot_loss(history):
-    plt.figure(figsize=(7,7))
+    plt.figure(figsize=(7, 7))
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper right')
-    #plt.legeng()
     plt.show()
+
 
 def model(units=[1200, 500, 75],
           input_dim=1200,
@@ -34,7 +39,9 @@ def model(units=[1200, 500, 75],
                         decay=1e-6)
 
     model = Sequential()
-    model.add(Dense(units=units[0], activation='relu', input_dim=input_dim))
+    model.add(Dense(units=units[0],
+                    activation='relu',
+                    input_dim=input_dim))
     model.add(Dropout(drop))
     model.add(Dense(units[1], activation='relu'))
     model.add(Dropout(drop))
