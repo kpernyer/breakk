@@ -70,6 +70,10 @@ def binarize_y(y, arg_list=[12, 13, 17, 20]):
     return y.map(lambda x: 1 if x in arg_list else 0)
 
 
+train = load_data()
+test = load_data(file='xab_test_400.csv')
+
+
 if __name__ == '__main__':
     print('Loading data...')
     train = load_data()
