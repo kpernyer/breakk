@@ -35,7 +35,7 @@ def train_model(xtrain, ytrain, xtest, ytest,
                 units=[1200, 500, 75],
                 input_dim=1200,
                 drop=0.4, lr=0.0001,
-                binary_class=True):
+                binary_class=False):
 
     prediction_layer = 'categorical_crossentropy'
     if binary_class:
@@ -59,7 +59,6 @@ def train_model(xtrain, ytrain, xtest, ytest,
     model.add(BatchNormalization())
     model.add(Dropout(drop))
     model.add(Dense(units=1, activation=prediction_layer))
-
 
     model.compile(loss='binary_crossentropy',
                   optimizer=optim,
