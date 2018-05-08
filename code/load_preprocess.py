@@ -65,6 +65,7 @@ def scale_data(xtrain, xtest, scaler_mode=None):
 
     return xtrain, xtest
 
+
 def binarize_y(y, arg_list=[12, 13, 17, 20]):
     """ pass list to take values in one of 2 categories """
 
@@ -73,16 +74,21 @@ def binarize_y(y, arg_list=[12, 13, 17, 20]):
     return y.map(lambda x: 1 if x in arg_list else 0)
 
 
-def prepare_data(train, test):
+def prepare_data(train, test, binary_class=False):
     """ return xtran, ytrain, xtest, ytest"""
     xtrain, ytrain = get_xy(train)
     xtest, ytest = get_xy(test)
-    ytrain_bin = binarize_y(ytrain)
-    ytest_bin = binarize_y(ytest)
+    unique_classes = len(np.unique(ytrain))
+    if binary_class:
+        ytrain = binarize_y(ytrain)
+        ytest = binarize_y(ytest)
+    else:
+        ytrain = keras.utils.to_categorical(ytrain + 1,
+                                            num_classes=unique_classes)
+        ytest = keras.utils.to_categorical(ytest + 1,
+                                            num_classes=unique_classes)
 
-    return xtrain, ytrain_bin, xtest, ytest_bin
-
-
+    return xtrain, ytrain, xtest, ytest
 
 
 if __name__ == '__main__':

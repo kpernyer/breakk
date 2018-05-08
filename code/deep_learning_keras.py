@@ -34,12 +34,17 @@ def train_model(xtrain, ytrain, xtest, ytest,
                 batch_size=2**9,
                 units=[1200, 500, 75],
                 input_dim=1200,
-                drop=0.4, lr=0.0001):
+                drop=0.4, lr=0.0001,
+                binary_class=True):
+
+    prediction_layer = 'categorical_crossentropy'
+    if binary_class:
+        prediction_layer = 'sigmoid'
 
     optim = optimizers.Adam(lr=lr,
-                        beta_1=0.9,
-                        beta_2=0.999,
-                        decay=1e-6)
+                            beta_1=0.9,
+                            beta_2=0.999,
+                            decay=1e-6)
 
     model = Sequential()
     model.add(Dense(units=units[0],
@@ -53,7 +58,7 @@ def train_model(xtrain, ytrain, xtest, ytest,
     model.add(Dense(units=units[2], activation='relu'))
     model.add(BatchNormalization())
     model.add(Dropout(drop))
-    model.add(Dense(units=1, activation='sigmoid'))
+    model.add(Dense(units=1, activation=prediction_layer))
 
 
     model.compile(loss='binary_crossentropy',
