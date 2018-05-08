@@ -67,17 +67,28 @@ def scale_data(xtrain, xtest, scaler_mode=None):
 
 def binarize_y(y, arg_list=[12, 13, 17, 20]):
     """ pass list to take values in one of 2 categories """
+
+    # Convert labels to categorical one-hot encoding
+    # one_hot_labels = keras.utils.to_categorical(labels, num_classes=10)
     return y.map(lambda x: 1 if x in arg_list else 0)
 
 
-train = load_data(file='all_training_400_minisensor_1.csv')
-test = load_data(file='all_test_400_minisensor.csv')
+def prepare_data(train, test):
+    """ return xtran, ytrain, xtest, ytest"""
+    xtrain, ytrain = get_xy(train)
+    xtest, ytest = get_xy(test)
+    ytrain_bin = binarize_y(ytrain)
+    ytest_bin = binarize_y(ytest)
+
+    return xtrain, ytrain_bin, xtest, ytest_bin
+
+
 
 
 if __name__ == '__main__':
     print('Loading data...')
-    train = load_data()
-    test = load_data(file='xab_test_400.csv')
+    train = load_data(file='all_training_400_minisensor_1.csv')
+    test = load_data(file='all_test_400_minisensor.csv')
     print('Done with loading data.')
 
     xtrain, ytrain = get_xy(train)
