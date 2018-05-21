@@ -125,7 +125,7 @@ def train_lstm(train_iter, val_iter,
             num_hidden=num_outputs)
 
     net_lstm = mx.sym.LogisticRegressionOutput(net_lstm,
-                                               name='binary')
+                                               name='softmax')
 
     mod = mx.mod.Module(net_lstm, context=mx.gpu())
 
