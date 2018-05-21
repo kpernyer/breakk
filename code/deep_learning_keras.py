@@ -95,5 +95,11 @@ if __name__ == '__main__':
     print('Training score:', f1_score(ytrain_bin, pred_train))
     print('Test score:', f1_score(ytest_bin, pred_test))
 
+    model, history = train_model(xtrain_sc, ytrain, xtest_sc, ytest, output_dim=1)
+    pred_train = model.predict_classes(xtrain_sc)
+    pred_test = model.predict_classes(xtest_sc)
+    print('Training score:', f1_score(ytrain, pred_train))
+    print('Test score:', f1_score(ytest, pred_test))
+
     plot_loss(history)
 
