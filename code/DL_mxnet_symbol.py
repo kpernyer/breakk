@@ -131,6 +131,8 @@ def train_lstm(train_iter, val_iter,
 
     mod.bind(data_shapes=train_iter.provide_data,
              label_shapes=train_iter.provide_label)
+
+    """Xavier not accepted for initialization in LSTM"""
     mod.init_params(initializer=mx.init.Xavier())
     mod.init_optimizer(optimizer='Adam',
                        optimizer_params=(('learning_rate', 0.01)))
