@@ -54,7 +54,7 @@ def scale_data(xtrain, xtest, scaler_mode=None):
     if scaler_mode == 'minmax':
         scaler = MinMaxScaler()
 
-    elif scaler_mode == 'standardscaler':
+    elif scaler_mode in ['normal', 'Normal', 'standardscaler']:
         scaler = StandardScaler()
 
     else:
@@ -74,19 +74,21 @@ def binarize_y(y, arg_list=[12, 13, 17, 20]):
     return y.map(lambda x: 1 if x in arg_list else 0)
 
 
-def prepare_data(train, test, binary_class=False):
+def prepare_data(train, test, arg_list, binary_class=False):
     """ return xtran, ytrain, xtest, ytest"""
     xtrain, ytrain = get_xy(train)
     xtest, ytest = get_xy(test)
     unique_classes = len(np.unique(ytrain))
     if binary_class:
-        ytrain = binarize_y(ytrain)
-        ytest = binarize_y(ytest)
+        ytrain = binarize_y(ytrain, arg_list)
+        ytest = binarize_y(ytest, arg_list)
     else:
-        ytrain = keras.utils.to_categorical(ytrain + 1,
-                                            num_classes=unique_classes)
-        ytest = keras.utils.to_categorical(ytest + 1,
-                                            num_classes=unique_classes)
+        ytrain = keras.utils.to_categorical(
+                ytrain + 1,
+                num_classes=unique_classes)
+        ytest = keras.utils.to_categorical(
+                ytest + 1,
+                num_classes=unique_classes)
 
     return xtrain, ytrain, xtest, ytest
 
