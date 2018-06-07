@@ -68,9 +68,6 @@ def nn_model(num_outputs=1,
     return net
 
 
-
-
-
 """ RNN models """
 def rnn_fused(timesteps=400,
               num_layers=3,
@@ -116,19 +113,26 @@ def rnn_fused(timesteps=400,
     return outputs
 
 
-def train(xtrain_lstm_sc, ytrain_mx,
-          val_lstm_sc, ytest_mx,
-          timesteps=400, num_layers=3,
-          mode='lstm', num_hidden=20,
-          dropout=0.4, num_outputs=1,
-          batch_size=2**9, input_dim=3,
-          learning_rate=0.01, num_epoch=20):
+def train_lstm(xtrain_mx,
+               ytrain_mx,
+               xval_mx,
+               yval_mx,
+               timesteps=400,
+               num_layers=3,
+               mode='lstm',
+               num_hidden=20,
+               dropout=0.4,
+               num_outputs=1,
+               batch_size=2**9,
+               input_dim=3,
+               learning_rate=0.01,
+               num_epoch=20):
 
     """ ---Args---
-    xtrain_lstm_sc: training data a mxnet NDArray tensor
+    xtrain_mx: training data a mxnet NDArray tensor
     ytrain_mx: training labels, a mxnet NDArray tensor
-    val_lstm_sc: validation set, a mxnet NDArray tensor
-    ytest_mx: test labels, a mxnet NDArray tensor
+    xval_mx: validation set, a mxnet NDArray tensor
+    yval_mx: test labels, a mxnet NDArray tensor
     timesteps: length for sequence
     num_layers: number of hidden layers
     mode: type of network, eg LSTM, GRU, RNN
@@ -141,22 +145,22 @@ def train(xtrain_lstm_sc, ytrain_mx,
     num_epoch: no of epochs to train
     """
 
-    train_lstm_iter = mx.io.NDArrayIter(
-            xtrain_lstm_sc,
+    train_iter = mx.io.NDArrayIter(
+            xtrain_mx,
             ytrain_mx,
             batch_size,
             shuffle=True,
             last_batch_handle='discard')
 
-    val_lstm_iter = mx.io.NDArrayIter(
-            val_lstm_sc,
-            ytest_mx,
+    val_iter = mx.io.NDArrayIter(
+            xval_mx,
+            yval_mx,
             batch_size,
             shuffle=False,
             last_batch_handle='discard')
 
-    train_lstm_iter.reset()
-    val_lstm_iter.reset()
+    train_iter.reset()
+    val_iter.reset()
 
     net = rnn_fused(timesteps=timesteps,
                     num_layers=num_layers,
@@ -167,25 +171,26 @@ def train(xtrain_lstm_sc, ytrain_mx,
                     input_dim=input_dim)
 
     mod = mx.mod.Module(net, context=mx.gpu())
-    mod.bind(data_shapes=train_lstm_iter.provide_data,
-             label_shapes=train_lstm_iter.provide_label)
+    mod.bind(data_shapes=train_iter.provide_data,
+             label_shapes=train_iter.provide_label)
 
     mod.init_params(initializer=mx.init.Xavier())
     mod.init_optimizer(
             optimizer='sgd',
             optimizer_params=(('learning_rate', learning_rate), ))
 
-    mod.fit(
-            train_data=train_lstm_iter,
-            eval_data=train_lstm_iter,
+    mod.fit(train_data=train_iter,
+            eval_data=train_iter,
             eval_metric='f1',
             num_epoch=num_epoch,
             batch_end_callback = mx.callback.Speedometer(
                     batch_size, 100))
 
-    # score returns a list with one elemnet
-    # which contains a tuple with 2 elements index[0][1]
-    f1_train = mod.score(train_lstm_iter, 'f1')
-    f1_test = mod.score(val_lstm_iter, 'f1')
+# =============================================================================
+#     # score returns a list with one elemnet
+#     # which contains a tuple with 2 elements index[0][1]
+#     f1_train = mod.score(train_iter, 'f1')
+#     f1_test = mod.score(val_iter, 'f1')
+# =============================================================================
 
-    return f1_train[0][1], f1_test[0][1]
+    return mod, train_iter, val_iter
